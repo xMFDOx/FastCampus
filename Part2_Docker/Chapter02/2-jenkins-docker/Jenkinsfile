@@ -38,10 +38,10 @@ pipeline {
         }
         stage('Deploy to AWS EC2 VM'){
             steps{
-                sshagent(credentials : ["deploy-key"]) {
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${deployHost} \
-                     'aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${ecrUrl}/${repository}; \
-                      docker run -d -p 80:8080 -t ${ecrUrl}/${repository}:${currentBuild.number};'"
+			withCredentials([sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY')]) {
+                   	sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ubuntu@${DEPLOY_HOST} \
+                     	'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_URL}/${REPOSITORY}; \
+                      	docker run -d -p 80:8080 -t ${ECR_URL}/${REPOSITORY}:${BUILD_NUMBER};'"
                 }
             }
         }
