@@ -8,6 +8,15 @@ def deployHost="172.31.23.43"
 pipeline {
     agent any
 
+	
+    environment {
+        AWS_REGION = "${region}"
+        ECR_URL = "${ecrUrl}"
+        REPOSITORY = "${repository}"
+        BUILD_NUMBER = "${currentBuild.number}"
+        DEPLOY_HOST = "${deployHost}"
+    }
+
     stages {
         stage('Pull Codes from Github'){
             steps{
